@@ -1,62 +1,109 @@
-# Implementing Docker in CentOS 8 Server
+# Docker Guide for Local Hosting and CentOS 8 Server Setup
 
-## Introduction
-This guide covers the step-by-step process of implementing Docker on a CentOS 8 server. CentOS 8 is a Linux web server based on Red Hat.
+## What is Docker?
 
-## Prerequisites
-- **Access to CentOS 8 Server:** You should have access to the server either locally or via a virtual machine.
+Docker is a platform for building and running applications into standardized units called containers. These containers are mostly isolated from the rest of the system (server) and contain everything they need to run self-contained.
 
-## Step-by-Step Guide
+In the context of web development, Docker allows us to deploy an application on any server without having to worry about installing other dependencies or encountering conflicts with other applications on the same server.
 
-1. **Download Docker onto the server using `curl`:**
-    - **Command:** `sudo curl -fsSL https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo`
-    - ![This command downloads the Docker repository file and saves it to the appropriate directory.]
+## How Does Docker Work?
 
-2. **Update the cache:**
+Docker provides a standardized way to run our code. Docker itself is an operating system for containers, similar to how virtual machines (VMs) virtualize server hardware. Docker virtualizes an operating system for a server and is used to build, run, start, and stop containers.
+
+## Why Use Docker?
+
+Docker provides several benefits in development:
+
+- **Improved server resource allocation:** Docker allows us to run more code on our servers, reducing costs.
+- **Seamless deployment:** Moving applications from the local machine to production is streamlined, eliminating the common issue of “it runs on my machine.”
+
+## Local Docker
+
+In this example, we will use a locally hosted sample project built in Node.js and React, running the project through Docker Desktop.
+
+1. **Clone the application from GitHub:**
+    - **Command:** `git clone https://github.com/docker/getting-started-app.git`
+    - The directory should look like this:
+
+    ```
+    ├── getting-started-app/
+        ├── package.json
+        ├── README.md
+        ├── spec/
+        ├── src/
+        └── yarn.lock
+    ```
+
+2. **Build the Docker Image with a Dockerfile:**
+    - A Dockerfile is a text file that contains a script of instructions for building a container image.
+
+    ```Dockerfile
+    FROM node:18-alpine
+    WORKDIR /app
+    COPY . .
+    RUN yarn install --production
+    CMD ["node", "src/index.js"]
+    EXPOSE 3000
+    ```
+
+    - **Command:** `docker build -t getting-started .`
+    - `-t` is a tag flag for the image, giving it the name “getting-started.”
+    - `.` at the end of the command tells Docker to look for the Dockerfile in the current directory.
+
+3. **Run the Docker Image:**
+    - **Command:** `docker run -dp 127.0.0.1:3000:3000 getting-started`
+    - Open a web browser and visit `http://127.0.0.1:3000` to see the sample app.
+
+By following these steps, you can create a fully functional local environment with frontend and backend communication and a persistent database, all without having to download React, Node.js, or other dependencies.
+
+## Step-by-Step Guide to Implement DockerRepository in CentOS 8 Server
+
+1. **Access the Linux server using a virtual machine (for example).**
+
+2. **Check for package updates (if required):**
+    - **Command:** `sudo dnf check-update`
+    - If updates are available, use the following command:
+    - **Command:** `sudo dnf upgrade`
+
+3. **Download Docker onto the server using `curl`:**
+    - **Command:** `sudo curl https://download.docker.com/linux/centos/docker-ce.repo -o /etc/yum.repos.d/docker-ce.repo`
+
+4. **Update the cache:**
     - **Command:** `sudo yum makecache`
-    - ![This updates the package manager cache to verify that the Docker repository was successfully added.]
 
-3. **Install Docker (Community Edition):**
+5. **Install Docker on the CentOS 8 server (Community Edition):**
     - **Command:** `sudo dnf -y install docker-ce --nobest`
-    - ![This installs Docker CE (Community Edition) with the `--nobest` flag to avoid potential dependency issues.]
 
-4. **Enable and start Docker:**
+6. **Enable Docker Daemon:**
     - **Command:** `sudo systemctl enable --now docker`
-    - ![This command enables Docker to start on boot and starts the Docker service immediately.]
 
-5. **Reboot the server:**
-    - ![Reboot the server to ensure Docker starts on boot.]
-
-6. **Check the Docker version:**
+7. **Reboot the server and check Docker version for testing:**
     - **Command:** `docker version`
-    - ![This checks the installed version of Docker, confirming the installation was successful.]
 
-7. **Add a user to the Docker group:**
+8. **Add a user to the Docker group:**
     - **Command:** `sudo usermod -aG docker sampleUser`
-    - ![This command adds the user `sampleUser` to the Docker group, allowing them to execute Docker commands without being root.]
-
-8. **Verify the user's groups:**
+    - Verify the user's groups:
     - **Command:** `id sampleUser`
-    - ![This command displays the groups that the user `sampleUser` belongs to, confirming their membership in the Docker group.]
+
+At this point, Docker is downloaded, installed, and configured for the user to use Docker.
 
 ## Testing Docker
 
-1. **Run a sample Docker image:**
+1. **Run a sample Docker image provided by Docker:**
     - **Command:** `docker run hello-world`
-    - ![This runs the "hello-world" Docker image. If it's not available locally, it will be pulled from the Docker repository.]
+    - This will pull the image from the Docker repository if it isn't already local.
 
-2. **Search for Docker images:**
-    - **Command:** `docker search ubuntu`
-    - ![This returns all Docker images that contain "ubuntu" as the search term.]
-
-3. **Search for other Docker images:**
-    - **Command:** `docker search react`
-    - ![This returns Docker images that contain "react" as the search term.]
-    - **Command:** `docker search node`
-    - ![This returns Docker images that contain "node" as the search term.]
-    - **Command:** `docker search openHims`
-    - ![This returns Docker images that contain "openHims" as the search term.]
-
-4. **View Docker help:**
+2. **View Docker help options and commands:**
     - **Command:** `docker`
-    - ![This command displays options and commands available with Docker.]
+
+## Download an Image and Set Up a Container
+
+1. **Search for Docker images:**
+    - **Command:** `docker search ubuntu`
+    - This returns all Docker images that contain "ubuntu."
+
+2. **Search for other Docker images:**
+    - **Command:** `docker search react`
+    - **Command:** `docker search node`
+    - **Command:** `docker search openHims`
+    - Use these commands to search for Docker images of interest.
